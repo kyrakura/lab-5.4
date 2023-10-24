@@ -1,53 +1,59 @@
 #include <iostream>
+#include <cmath>
 using namespace std;
 
-double S0(int N) {
-    double s0 = 1;
-    for (int k = N; k <= 19; k++) {
-        s0 *= (k - N) / (double)(k + N) + 1;
+double S0(const int n)
+{
+    double s = 0;
+    for (int i = 3; i <= n; i++) {
+        s += (cos(i / 2.0) + pow(sin(i), 2)) / (1 + sin(i) * cos(i));
     }
-    return s0;
+    return s;
 }
 
-double S1(int K, int N) {
-    if (K > 19) {
-        return 1;
-    }
-    return ((K - N) / (double)(K + N) + 1) * S1(K + 1, N);
+double S1(const int n, const int i)
+{
+    if (i > n)
+        return 0;
+    else
+        return (cos(i / 2.0) + pow(sin(i), 2)) / (1 + sin(i) * cos(i)) + S1(n, i + 1);
 }
 
-double S2(int K, int N) {
-    if (K < N) {
-        return 1;
-    }
-    return ((K - N) / (double)(K + N) + 1) * S2(K - 1, N);
+double S2(const int n, const int i)
+{
+    if (i < 3)
+        return 0;
+    else
+        return (cos(i / 2.0) + pow(sin(i), 2)) / (1 + sin(i) * cos(i)) + S2(n, i - 1);
 }
 
-double S3(int K, int N, double t = 1) {
-    t *= ((K - N) / (double)(K + N) + 1);
-    if (K >= 19) {
+double S3(const int n, const int i, double t)
+{
+    t += (cos(i / 2.0) + pow(sin(i), 2)) / (1 + sin(i) * cos(i));
+    if (i >= n)
         return t;
-    }
-    return S3(K + 1, N, t);
+    else
+        return S3(n, i + 1, t);
 }
 
-double S4(int K, int N, double t = 1) {
-    t *= ((K - N) / (double)(K + N) + 1);
-    if (K <= N) {
+double S4(const int n, const int i, double t)
+{
+    t += (cos(i / 2.0) + pow(sin(i), 2)) / (1 + sin(i) * cos(i));
+    if (i <= 3)
         return t;
-    }
-    return S4(K - 1, N, t);
+    else
+        return S4(n, i - 1, t);
 }
 
 int main() {
-    int N;
-    cout << "N = ";
-    cin >> N;
-    cout << "(iter)           P0 = " << S0(N) << endl;
-    cout << "(rec up ++)      P1 = " << S1(N, N) << endl;
-    cout << "(rec up --)      P2 = " << S2(19, N) << endl;
-    cout << "(rec down ++)    P3 = " << S3(N, N) << endl;
-    cout << "(rec down --)    P4 = " << S4(19, N) << endl;
+    int n;
+    cout << "n = ";
+    cin >> n;
+    cout << "(iter)           S0 = " << S0(n) << endl;
+    cout << "(rec up ++)      S1 = " << S1(n, 3) << endl;
+    cout << "(rec up --)      S2 = " << S2(n, n) << endl;
+    cout << "(rec down ++)    S3 = " << S3(n, 3, 0) << endl;
+    cout << "(rec down --)    S4 = " << S4(n, n, 0) << endl;
 
     return 0;
 }
